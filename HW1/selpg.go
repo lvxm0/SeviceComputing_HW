@@ -89,7 +89,6 @@ func process_args() {
 func process_input(){
 	var fin *os.File
 	var fout io.WriteCloser
-	bufFin := bufio.NewReader(fin)
 	cmd := &exec.Cmd{}
 	var page_ctr int
 	var line_ctr int
@@ -109,7 +108,7 @@ func process_input(){
 	} else {
 		fin = os.Stdin
 	}
-
+	bufFin := bufio.NewReader(fin)
   //output
   if sa.print_dest == ""{
   	fout = os.Stdout
@@ -129,9 +128,16 @@ func process_input(){
   	page_ctr = 1
   	for{
   		line, rerror := bufFin.ReadString('\n')
-  		if rerror != nil {break}
+		  //fmt.Fprintf(os.Stderr,"haha \n")    
+		  if rerror != nil {
+			//fmt.Fprintf(os.Stderr,line)  
+			fmt.Fprintf(os.Stderr,"haha1 ")   	  
+			break
+		}
 
   		line_ctr++
+		
+		  //fmt.Fprintf(os.Stderr,"%d ",line_ctr)  
 
   		if line_ctr > sa.page_len {
 			line_ctr=1
@@ -156,7 +162,8 @@ func process_input(){
 
   		if(page_ctr >= sa.start_page)&&(page_ctr <= sa.end_page) {
   			
-  			_, werror := fout.Write([]byte(line))
+			  _, werror := fout.Write([]byte(line))
+			  //fmt.Fprintf(os.Stderr,line)
   			if werror != nil{ os.Exit(4) }
 
   		}
