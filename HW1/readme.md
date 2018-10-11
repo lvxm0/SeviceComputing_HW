@@ -5,9 +5,9 @@
 先在终端运行 $ go get github.com/spf13/pflag<br>
 然后运行 $ go build selpg.go<br> 
 运行selpg $ ./selpg<br>
-![](https://github.com/lvxm0/SeviceComputing_HW/raw/master/HW1/01.PNG)
+
 <h1>测试结果</h1>
-1.测试数据输入为100行，每一行为对应行号。先测试不加参数的命令行。<br>
+1.测试数据输入为100行，每一行为对应行号。先测试不加参数的命令行 <br>
 ![](https://github.com/lvxm0/SeviceComputing_HW/raw/master/HW1/5.PNG)
 
 2.测试命令 $ ./selpg -s 1 -e 2 input.txt <br>
