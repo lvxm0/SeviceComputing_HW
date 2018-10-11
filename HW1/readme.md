@@ -7,4 +7,5 @@
 运行selpg $ ./selpg<br>
 
 <h1>测试结果</h1>
-1. ![$ ./selpg -s 1 -e 2 input.txt ](https://github.com/lvxm0/SeviceComputing_HW/blob/master/HW1/01.PNG)
+![这里写图片描述](https://github.com/lvxm0/SeviceComputing_HW/blob/master/HW1/01.PNG)
+![$ ./selpg -s 1 -e 2 input.txt ](https://github.com/lvxm0/SeviceComputing_HW/blob/master/HW1/01.PNG)
