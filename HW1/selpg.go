@@ -6,9 +6,8 @@ import(
 	"os"
 	"os/exec"
 	"bufio"
-	"syscall"
-	"strings"
-	flag "github.com/ogier/pflag"
+//	"syscall"
+	flag "github.com/spf13/pflag"
 )
 //types struct
 type sp_args struct
@@ -26,7 +25,6 @@ var sa = new(sp_args)
 //program name,for error messages
 var progname string
 
-//main()
 func main() {
 	progname = os.Args[0]
 
@@ -58,32 +56,32 @@ func process_args() {
 		flag.Usage()
 		os.Exit(1)
 	} 
-	else if os.Args[1] != "-s" || os.Args[3] != "-e" {
+	if os.Args[1] != "-s" || os.Args[3] != "-e" {
 		fmt.Fprintf(os.Stderr, "\n%s: 1st arg should be -s start_page and 2nd arg should be -e\n", progname)		
 		flag.Usage()
 		os.Exit(2)
 	}
-	else if sa.start_page < 1 {
+	if sa.start_page < 1 {
 		fmt.Fprintf(os.Stderr, "invalid start page %v\n", sa.start_page)
 		flag.Usage()
 		os.Exit(3)
 	}
-	else if sa.end_page < 1 || sa.end_page < sa.start_page {
+	if sa.end_page < 1 || sa.end_page < sa.start_page {
 		fmt.Fprintf(os.Stderr, "invalid end page %v\n", sa.end_page)
 		flag.Usage()
 		os.Exit(4)
 	} 
-	else {
 		if flag.NArg() > 0 {
 			
-			if  syscall.Access(sa.in_filename, syscall.O_RDONLY) != nil {
-				fmt.Fprintf(os.Stderr, "\n%s: input file \"%s\" does not exist\n",progname, flag.Args(0));
+			_, err := os.Stat(flag.Args()[0])
+			if  err != nil && os.IsNotExist(err) {
+				fmt.Fprintf(os.Stderr, "\n%s: input file \"%s\" does not exist\n",progname, flag.Args()[0]);
 				os.Exit(5);
 			}
-			sa.in_filename = flag.Args(0)
+			sa.in_filename = flag.Args()[0]
 
 		}
-	}
+	
 
 }
 //process_input()
@@ -98,6 +96,8 @@ func process_input(){
 	var err error
 
   // input
+
+
 	if sa.in_filename != "" {
 		fin, err = os.Open(sa.in_filename)
 		
@@ -106,16 +106,14 @@ func process_input(){
 			os.Exit(6)
 		}
 		defer fin.Close()
-	}
-	else{
+	} else {
 		fin = os.Stdin
 	}
 
   //output
   if sa.print_dest == ""{
   	fout = os.Stdout
-  }
-  else {
+  }else {
   	cmd = exec.Command("lp", "-d", sa.print_dest)
   	fout, err = cmd.StdinPipe()
 		if err != nil {
@@ -136,9 +134,9 @@ func process_input(){
   		line_ctr++
 
   		if line_ctr > sa.page_len {
-				line_ctr=1
+			line_ctr=1
   			page_ctr++
-
+		}
   		if page_ctr > sa.end_page {break}
 
   		if page_ctr >= sa.start_page && page_ctr <= sa.end_page {
@@ -146,14 +144,10 @@ func process_input(){
   			if werror != nil{ os.Exit(4) }
   		}
 
-  		}
-
 
   	}
 
-  }
-  //count by /n
-  else{
+  } else{//count by /n
   	page_ctr = 1
   	for{
 
@@ -175,8 +169,7 @@ func process_input(){
 
   if page_ctr < sa.start_page {
   	fmt.Fprintf(os.Stderr, "start_page (%d) > total pages (%d), no output written\n", sa.start_page, page_ctr)
-  }
-  else if page_ctr < sa.end_page {
+  } else if page_ctr < sa.end_page {
   	fmt.Fprintf(os.Stderr, "end_page (%d) > total pages (%d), less output than expected\n", sa.end_page, page_ctr)
   }
 }
